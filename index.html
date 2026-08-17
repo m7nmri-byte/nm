@@ -1,158 +1,420 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>جدول برنامج النماص</title>
-  <style>
-    body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background-color: #f4f6f9;
-      color: #333;
-      padding: 20px;
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>جدول رحلة النماص</title>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #1e3a8a;
+            --primary-light: #eff6ff;
+            --accent: #2563eb;
+            --bg: #f8fafc;
+            --card-bg: #ffffff;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --border: #e2e8f0;
+            --active-border: #2563eb;
+            --now-badge-bg: #dc2626;
+        }
 
-    .container {
-      max-width: 600px;
-      margin: 0 auto;
-    }
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Tajawal', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
 
-    h2 {
-      text-align: center;
-      color: #1a252f;
-    }
+        body {
+            background-color: var(--bg);
+            color: var(--text-main);
+            padding-bottom: 40px;
+        }
 
-    .program-card {
-      background: #ffffff;
-      border: 2px solid #e2e8f0;
-      border-radius: 10px;
-      padding: 15px 20px;
-      margin-bottom: 12px;
-      transition: all 0.4s ease;
-      position: relative;
-    }
+        header {
+            position: sticky;
+            top: 0;
+            background-color: var(--card-bg);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.06);
+            z-index: 100;
+            padding-top: 15px;
+            border-bottom: 1px solid var(--border);
+        }
 
-    /* الستايل الخاص بالبرنامج الحالي */
-    .program-card.active {
-      background-color: #2563eb;
-      color: #ffffff;
-      border-color: #1d4ed8;
-      box-shadow: 0 10px 20px rgba(37, 99, 235, 0.3);
-      transform: scale(1.03);
-    }
+        .header-title {
+            text-align: center;
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 12px;
+        }
 
-    .program-card.active .status-badge {
-      display: inline-block;
-      background-color: #ef4444;
-      color: white;
-      padding: 2px 8px;
-      border-radius: 12px;
-      font-size: 0.8rem;
-      font-weight: bold;
-      animation: pulse 1.5s infinite;
-    }
+        .days-nav {
+            display: flex;
+            gap: 8px;
+            overflow-x: auto;
+            padding: 0 12px 12px 12px;
+            scrollbar-width: none;
+        }
 
-    .time-range {
-      font-size: 0.9rem;
-      opacity: 0.8;
-      margin-top: 5px;
-    }
+        .days-nav::-webkit-scrollbar {
+            display: none;
+        }
 
-    .status-badge {
-      display: none;
-    }
+        .day-tab {
+            flex: 0 0 auto;
+            padding: 10px 16px;
+            background: #f1f5f9;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-align: center;
+        }
 
-    @keyframes pulse {
-      0% { opacity: 1; }
-      50% { opacity: 0.5; }
-      100% { opacity: 1; }
-    }
-  </style>
+        .day-tab.active {
+            background: var(--primary);
+            color: #ffffff;
+            box-shadow: 0 4px 12px rgba(30, 58, 138, 0.3);
+        }
+
+        .container {
+            padding: 16px;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .program-card {
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 16px;
+            margin-bottom: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+            border: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            transition: all 0.3s ease;
+        }
+
+        /* تنسيق الكرت في الوقت الحالي */
+        .program-card.is-now {
+            border: 2px solid var(--active-border);
+            background-color: #f0f7ff;
+            box-shadow: 0 4px 18px rgba(37, 99, 235, 0.2);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px dashed var(--border);
+            padding-bottom: 8px;
+        }
+
+        .program-name {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--primary);
+            flex: 1;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .now-badge {
+            background-color: var(--now-badge-bg);
+            color: #ffffff;
+            font-size: 0.75rem;
+            font-weight: 700;
+            padding: 2px 8px;
+            border-radius: 6px;
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+
+        .actual-time {
+            background: #fef3c7;
+            color: #92400e;
+            font-size: 0.8rem;
+            font-weight: 700;
+            padding: 4px 8px;
+            border-radius: 8px;
+            white-space: nowrap;
+        }
+
+        .card-details {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            font-size: 0.88rem;
+        }
+
+        .detail-item {
+            display: flex;
+            flex-direction: column;
+            background: #f8fafc;
+            padding: 8px 10px;
+            border-radius: 8px;
+        }
+
+        .detail-label {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-bottom: 2px;
+        }
+
+        .detail-value {
+            font-weight: 600;
+            color: var(--text-main);
+            white-space: pre-line;
+        }
+
+        .full-width {
+            grid-column: span 2;
+        }
+    </style>
 </head>
 <body>
 
-<div class="container">
-  <h2>جدول البرامج اليومي</h2>
-  <div id="schedule"></div>
-</div>
+    <header>
+        <div class="header-title">جدول البرنامج اليومي</div>
+        <div class="days-nav" id="daysNav"></div>
+    </header>
 
-<script>
-  // قائمة البرامج مع أوقات البداية والنهاية بصيغة (HH:MM)
-  const scheduleData = [
-    { id: 1, title: "البرنامج الصباحي", start: "08:00", end: "10:00" },
-    { id: 2, title: "فقرة الحوار المباشر", start: "10:00", end: "12:30" },
-    { id: 3, title: "الأخبار والتغطية الخاصة", start: "12:30", end: "15:00" },
-    { id: 4, title: "البرنامج المسائي", start: "15:00", end: "18:00" },
-    { id: 5, title: "البث الليلة والختام", start: "18:00", end: "23:59" }
-  ];
+    <main class="container">
+        <div id="programList"></div>
+    </main>
 
-  let currentActiveId = null;
+    <script>
+        const scheduleData = [
+            {
+                dayTitle: "يوم الاثنين",
+                dayIndex: 1, // الاثنين
+                subtitle: "اليوم الأول",
+                programs: [
+                    { time: "04:15 - 04:35", actual: "", title: "التجمع", person: "علي الحتو", location: "آخر المسجد" },
+                    { time: "04:45 - 05:15", actual: "", title: "صلاة الفجر", person: "الجميع", location: "المسجد" },
+                    { time: "05:30", actual: "9 ساعات و 30 دقيقة", title: "الانطلاق", person: "علي الحتو", location: "" },
+                    { time: "04:00", actual: "", title: "الوصول", person: "", location: "" },
+                    { time: "04:00 - 04:45", actual: "35 دقيقة", title: "تنزيل العفش + وقت مفتوح", person: "اللجنة الاجتماعية", location: "الاستراحة مقابل باب الدخول" },
+                    { time: "04:45 - 05:45", actual: "45 دقيقة", title: "الجلسة الافتتاحية مع الشرح", person: "علي الحتو", location: "المشب" },
+                    { time: "05:45 - 06:45", actual: "45 دقيقة", title: "ادخال العفش للغرف + لقاء أسري", person: "قادة ومعلمي الاسر", location: "مقرات الاسر" },
+                    { time: "07:00 - 07:30", actual: "30 دقيقة", title: "صلاة المغرب والعشاء\nكلمة طالب 1", person: "أسرة التعاون", location: "المشب" },
+                    { time: "07:30 - 08:45", actual: "ساعة وربع", title: "درس المسئولية\nموانع / مسئوليات في حياتنا", person: "أبو عبدالله\nعلي الحتو", location: "المشب" },
+                    { time: "09:00 - 10:00", actual: "60 دقيقة", title: "كرة طائرة", person: "أبو فيصل", location: "ملعب الطائرة" },
+                    { time: "10:15 - 10:45", actual: "30 دقيقة", title: "عشاء", person: "اللجنة الاجتماعية", location: "مقرات الاسر" },
+                    { time: "11:00 - 04:00", actual: "5 ساعات", title: "نووووووووم", person: "علي الحتو", location: "مقرات الاسر" }
+                ]
+            },
+            {
+                dayTitle: "يوم الثلاثاء",
+                dayIndex: 2, // الثلاثاء
+                subtitle: "اليوم الثاني",
+                programs: [
+                    { time: "04:00 - 04:30", actual: "30 دقيقة", title: "الاستيقاظ وصلاة الوتر", person: "علي الحتو", location: "مقرات الاسر" },
+                    { time: "04:30 - 05:00", actual: "30 دقيقة", title: "صلاة الفجر\nكلمة معلم 1", person: "أسرة الشموخ", location: "المشب" },
+                    { time: "05:00 - 05:45", actual: "45 دقيقة", title: "جلسة إشراق + أذكار", person: "معلمي الاسر\nمتابعة علي الحتو", location: "المشب" },
+                    { time: "06:00 - 07:45", actual: "ساعة 45", title: "مهرجان حركي", person: "أ. أسامة إسحاق\nأ/ حسين", location: "الساحة الخارجية" },
+                    { time: "08:00 - 08:45", actual: "45 دقيقة", title: "لقاء أسري", person: "قادة ومعلمي الاسر", location: "مقرات الاسر" },
+                    { time: "09:00 - 09:30", actual: "30 دقيقة", title: "فطور", person: "اللجنة الاجتماعية", location: "مقرات الاسر" },
+                    { time: "09:30 - 10:30", actual: "60 دقيقة", title: "نووووووووم", person: "علي الحتو", location: "مقرات الاسر" },
+                    { time: "10:30 - 11:00", actual: "30 دقيقة", title: "الاستيقاظ والتجهيز للانطلاق", person: "علي الحتو", location: "-" },
+                    { time: "11:00 - 07:00", actual: "8 ساعات", title: "طلعة تنومة\nدرس العفة ساعة و 30 دقيقة\nثقافي ثماني ساعة\nوقت مفتوح ساعة\nغداء\nصلاة ظهر وعصر وكلمة طالب 2", person: "أبو فيصل\nأ. أسامة إسحاق\nأ. حسين\nعبدالجبار\nأبو فيصل\nاللجنة الاجتماعية", location: "تنومة" },
+                    { time: "08:30 - 09:15", actual: "45 دقيقة", title: "صلاة المغرب والعشاء\nكلمة طالب 3 + الوتر", person: "أسرة الشموخ", location: "الساحة الخارجية" },
+                    { time: "09:15 - 10:30", actual: "ساعة وربع", title: "جلسة أخوية وقفص الاتهام", person: "أبو فيصل", location: "الساحة الخارجية" },
+                    { time: "10:30 - 11:15", actual: "45 دقيقة", title: "عشاء", person: "اللجنة الاجتماعية", location: "الساحة الخارجية" },
+                    { time: "11:30 - 04:30", actual: "5 ساعات", title: "نووووووووم", person: "علي الحتو", location: "مقرات الاسر" }
+                ]
+            },
+            {
+                dayTitle: "يوم الأربعاء",
+                dayIndex: 3, // الأربعاء
+                subtitle: "اليوم الثالث",
+                programs: [
+                    { time: "04:30 - 05:00", actual: "30 دقيقة", title: "الاستيقاظ", person: "علي الحتو", location: "-" },
+                    { time: "05:00 - 05:30", actual: "30 دقيقة", title: "صلاة الفجر\nكلمة معلم 2", person: "أسرة الطموح", location: "الساحة الخارجية" },
+                    { time: "05:30 - 06:15", actual: "45 دقيقة", title: "جلسة إشراق + أذكار", person: "معلمي الاسر\nمتابعة علي الحتو", location: "الساحة الخارجية" },
+                    { time: "06:30 - 07:30", actual: "60 دقيقة", title: "طائرة", person: "أبو فيصل", location: "ملعب الطائرة" },
+                    { time: "07:30 - 08:00", actual: "30 دقيقة", title: "وقت مفتوح وحبشتكان", person: "قادة ومعلمي الاسر\nاللجنة الاجتماعية", location: "-" },
+                    { time: "08:00 - 08:45", actual: "45 دقيقة", title: "لقاء أسري", person: "قادة ومعلمي الاسر", location: "مقرات الاسر" },
+                    { time: "09:00 - 10:30", actual: "ساعة وربع", title: "ثقافي حركي", person: "علي الحتو\nمساعدة أ. حسين", location: "مجلس السراميك" },
+                    { time: "10:30 - 12:30", actual: "ساعتين", title: "نووووووووم", person: "علي الحتو", location: "مقرات الاسر" },
+                    { time: "12:30 - 12:45", actual: "15 دقيقة", title: "استيقاظ وركوب الباص", person: "علي الحتو", location: "-" },
+                    { time: "01:00 - 04:00", actual: "4 ساعات", title: "طلعة المطل والفطور", person: "أبو فيصل", location: "-" },
+                    { time: "05:00 - 05:45", actual: "45 دقيقة", title: "العودة صلاة الظهر والعصر تأخير\nكلمة طالب 4", person: "أسرة الطموح", location: "المشب" },
+                    { time: "05:45 - 07:00", actual: "ساعة وربع", title: "درس حسن الخلق المعنى والاهتمية\nوارتباطه بالمروة", person: "أبو فيصل", location: "المشب" },
+                    { time: "07:15 - 07:45", actual: "30 دقيقة", title: "صلاة المغرب والعشاء\nكلمة طالب 5", person: "أسرة الطموح", location: "المشب" },
+                    { time: "08:00 - 09:30", actual: "ساعة ونصف", title: "لقاء أسري أخير", person: "قادة ومعلمي الاسر", location: "مقرات الاسر" },
+                    { time: "10:00 - 12:00", actual: "ساعتين", title: "حفل السمر", person: "أبو فيصل\nجميع المعلمين المتواجدين\nعلي الحتو", location: "؟؟" },
+                    { time: "12:00 - 01:00", actual: "60 دقيقة", title: "عشاء", person: "اللجنة الاجتماعية", location: "المشب" },
+                    { time: "01:00 - 01:30", actual: "30 دقيقة", title: "وقت مفتوح وشاهي", person: "اللجنة الاجتماعية", location: "الساحة الخارجية" },
+                    { time: "01:30 - 03:00", actual: "ساعة ونصف", title: "التكريم", person: "أ. حسين عبدالجبار", location: "المجلس الداخلي" },
+                    { time: "03:30 - 05:00", actual: "ساعة ونصف", title: "جلسة المصارحة والمطارحه", person: "أبو فيصل / أ. حسين", location: "المجلس الداخلي" }
+                ]
+            },
+            {
+                dayTitle: "يوم الخميس",
+                dayIndex: 4, // الخميس
+                subtitle: "اليوم الرابع والأخير",
+                programs: [
+                    { time: "05:00 - 05:25", actual: "25 دقيقة", title: "الاذان وصلاة الفجر", person: "علي الحتو", location: "المشب" },
+                    { time: "05:30 - 12:00", actual: "5 ساعات ونصف", title: "نووووووووم", person: "أبو فيصل", location: "مقرات الاسر" },
+                    { time: "12:00 - 12:30", actual: "30 دقيقة", title: "الاستيقاظ", person: "أبو فيصل", location: "-" },
+                    { time: "12:30 - 01:30", actual: "60 دقيقة", title: "تجهيز العفش", person: "اللجنة الاجتماعية", location: "الاستراحة مقابل باب الخروج" },
+                    { time: "01:30 - 01:50", actual: "20 دقيقة", title: "الاذان وصلاة الظهر والعصر", person: "علي الحتو", location: "المشب" },
+                    { time: "02:00 - 02:30", actual: "30 دقيقة", title: "كلمة ختامية", person: "علي الحتو\nأبو فيصل", location: "المشب" },
+                    { time: "02:30 - 12:00", actual: "9 ساعات ونصف", title: "الانطلاق والوصول", person: "أبو فيصل", location: "-" }
+                ]
+            }
+        ];
 
-  function renderSchedule() {
-    const container = document.getElementById('schedule');
-    container.innerHTML = '';
+        let activeIndex = 0;
+        let lastAutoScrolledProgram = null;
 
-    scheduleData.forEach(item => {
-      const card = document.createElement('div');
-      card.className = 'program-card';
-      card.id = `program-${item.id}`;
-      card.innerHTML = `
-        <div style="display: flex; justify-content: space-between; align-items: center;">
-          <h3 style="margin: 0;">${item.title}</h3>
-          <span class="status-badge">مباشر الآن</span>
-        </div>
-        <div class="time-range">من ${item.start} إلى ${item.end}</div>
-      `;
-      container.appendChild(card);
-    });
-  }
-
-  function updateActiveProgram() {
-    const now = new Date();
-    const currentMinutes = now.getHours() * 60 + now.getMinutes();
-
-    let foundActive = false;
-
-    scheduleData.forEach(item => {
-      const [startH, startM] = item.start.split(':').map(Number);
-      const [endH, endM] = item.end.split(':').map(Number);
-
-      const startMinutes = startH * 60 + startM;
-      const endMinutes = endH * 60 + endM;
-
-      const card = document.getElementById(`program-${item.id}`);
-
-      if (currentMinutes >= startMinutes && currentMinutes < endMinutes) {
-        foundActive = true;
-        if (currentActiveId !== item.id) {
-          // إزالة التمييز عن السابق
-          document.querySelectorAll('.program-card').forEach(c => c.classList.remove('active'));
-          
-          // إضافة التمييز للبرنامج الحالي
-          card.classList.add('active');
-          currentActiveId = item.id;
-
-          // التمرير التلقائي للبرنامج الحالي ليكون في منتصف الشاشة
-          card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        // تحديد اليوم الحالي تلقائياً بناءً على وقت النظام
+        function detectCurrentDay() {
+            const currentDayOfWeek = new Date().getDay(); // 1 = الاثنين, 2 = الثلاثاء ...
+            const foundIndex = scheduleData.findIndex(d => d.dayIndex === currentDayOfWeek);
+            if (foundIndex !== -1) {
+                activeIndex = foundIndex;
+            }
         }
-      } else {
-        card.classList.remove('active');
-      }
-    });
 
-    if (!foundActive && currentActiveId !== null) {
-      document.querySelectorAll('.program-card').forEach(c => c.classList.remove('active'));
-      currentActiveId = null;
-    }
-  }
+        function renderDaysNav() {
+            const nav = document.getElementById('daysNav');
+            nav.innerHTML = scheduleData.map((day, idx) => `
+                <div class="day-tab ${idx === activeIndex ? 'active' : ''}" onclick="selectDay(${idx})">
+                    <div>${day.dayTitle}</div>
+                </div>
+            `).join('');
+        }
 
-  // التشغيل عند التجميع
-  renderSchedule();
-  updateActiveProgram();
+        function selectDay(idx) {
+            activeIndex = idx;
+            renderDaysNav();
+            renderPrograms();
+            checkAndHighlightCurrentProgram(true);
+        }
 
-  // تحديث تلقائي كل 10 ثوانٍ لفحص الوقت
-  setInterval(updateActiveProgram, 10000);
-</script>
+        // تحويل النص الزمني مثل "04:15" إلى دقائق من بداية اليوم
+        function parseTimeToMinutes(timeStr) {
+            if (!timeStr) return null;
+            const parts = timeStr.trim().split(':');
+            if (parts.length < 2) return null;
+            return parseInt(parts[0], 10) * 60 + parseInt(parts[1], 10);
+        }
 
+        function renderPrograms() {
+            const list = document.getElementById('programList');
+            const dayData = scheduleData[activeIndex];
+
+            list.innerHTML = dayData.programs.map((item, pIdx) => `
+                <div class="program-card" id="program-card-${pIdx}">
+                    <div class="card-header">
+                        <div class="program-name">
+                            <span>${item.title.replace(/\n/g, '<br>')}</span>
+                            <span class="now-badge" id="badge-${pIdx}" style="display: none;">الآن</span>
+                        </div>
+                        ${item.actual ? `<div class="actual-time">المدة: ${item.actual}</div>` : ''}
+                    </div>
+                    <div class="card-details">
+                        <div class="detail-item">
+                            <span class="detail-label">الوقت (من - إلى)</span>
+                            <span class="detail-value">${item.time}</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">المقر</span>
+                            <span class="detail-value">${item.location || '-'}</span>
+                        </div>
+                        <div class="detail-item full-width">
+                            <span class="detail-label">المكلف</span>
+                            <span class="detail-value">${item.person ? item.person.replace(/\n/g, ' / ') : '-'}</span>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // إيجاد الفعالية الحالية وتظليلها والتنقل إليها
+        function checkAndHighlightCurrentProgram(forceScroll = false) {
+            const now = new Date();
+            const currentDayOfWeek = now.getDay();
+            const currentMinutes = now.getHours() * 60 + now.getMinutes();
+
+            const dayData = scheduleData[activeIndex];
+            const isToday = (dayData.dayIndex === currentDayOfWeek);
+
+            let activeCardFound = false;
+
+            dayData.programs.forEach((item, pIdx) => {
+                const card = document.getElementById(`program-card-${pIdx}`);
+                const badge = document.getElementById(`badge-${pIdx}`);
+                if (!card) return;
+
+                let isCurrent = false;
+
+                if (isToday && item.time) {
+                    const times = item.time.split('-').map(t => t.trim());
+                    if (times.length === 2) {
+                        let startMin = parseTimeToMinutes(times[0]);
+                        let endMin = parseTimeToMinutes(times[1]);
+
+                        if (startMin !== null && endMin !== null) {
+                            // التعامل مع الأوقات التي تتجاوز منتصف الليل (مثل 11:00 - 04:00)
+                            if (endMin < startMin) {
+                                if (currentMinutes >= startMin || currentMinutes < endMin) {
+                                    isCurrent = true;
+                                }
+                            } else {
+                                if (currentMinutes >= startMin && currentMinutes < endMin) {
+                                    isCurrent = true;
+                                }
+                            }
+                        }
+                    }
+                }
+
+                if (isCurrent) {
+                    activeCardFound = true;
+                    card.classList.add('is-now');
+                    if (badge) badge.style.display = 'inline-block';
+
+                    // التمرير التلقائي مرة واحدة عند التغيير للبرنامج الحالي
+                    if (forceScroll || lastAutoScrolledProgram !== pIdx) {
+                        card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        lastAutoScrolledProgram = pIdx;
+                    }
+                } else {
+                    card.classList.remove('is-now');
+                    if (badge) badge.style.display = 'none';
+                }
+            });
+
+            if (!activeCardFound) {
+                lastAutoScrolledProgram = null;
+            }
+        }
+
+        // البدء والتهيئة
+        detectCurrentDay();
+        renderDaysNav();
+        renderPrograms();
+        checkAndHighlightCurrentProgram(true);
+
+        // التحديث التلقائي المستمر كل 10 ثوانٍ
+        setInterval(() => {
+            checkAndHighlightCurrentProgram();
+        }, 10000);
+    </script>
 </body>
 </html>
