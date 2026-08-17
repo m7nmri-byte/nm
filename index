@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>جدول البرامج اليومية</title>
+    <!-- خط تجوال لشكل عصري وأنيق -->
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary: #6366f1;
+            --primary-light: #e0e7ff;
+            --bg: #f8fafc;
+            --card-bg: #ffffff;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --accent: #10b981;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Tajawal', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text-main);
+            padding-bottom: 30px;
+            overflow-x: hidden;
+        }
+
+        /* الهيدر العلوي */
+        header {
+            position: sticky;
+            top: 0;
+            background-color: var(--card-bg);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            z-index: 100;
+            padding-top: 15px;
+        }
+
+        .header-title {
+            text-align: center;
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 12px;
+        }
+
+        /* شريط التنقل بين الأيام (أفقي وسلس) */
+        .days-nav {
+            display: flex;
+            gap: 10px;
+            overflow-x: auto;
+            padding: 0 15px 12px 15px;
+            scrollbar-width: none; /* إخفاء شريط التمرير لفيرفوكس */
+        }
+
+        .days-nav::-webkit-scrollbar {
+            display: none; /* إخفاء شريط التمرير لكروم وسفاري */
+        }
+
+        .day-tab {
+            flex: 0 0 auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 65px;
+            height: 70px;
+            background: #f1f5f9;
+            border-radius: 16px;
+            border: 2px solid transparent;
+            cursor: pointer;
+            transition: all 0.25s ease;
+        }
+
+        .day-tab .day-name {
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: var(--text-muted);
+        }
+
+        .day-tab .day-date {
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-top: 2px;
+        }
+
+        /* اليوم النشط */
+        .day-tab.active {
+            background: var(--primary);
+            color: #fff;
+            box-shadow: 0 6px 12px rgba(99, 102, 241, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .day-tab.active .day-name,
+        .day-tab.active .day-date {
+            color: #fff;
+        }
+
+        /* حاوية قائمة البرامج */
+        .container {
+            padding: 20px 15px;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .section-title {
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            margin-bottom: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .program-list {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        /* كارت البرنامج */
+        .program-card {
+            background: var(--card-bg);
+            border-radius: 18px;
+            padding: 16px;
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+            border: 1px solid #edf2f7;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .time-box {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: var(--primary-light);
+            color: var(--primary);
+            padding: 10px;
+            border-radius: 14px;
+            min-width: 75px;
+            text-align: center;
+        }
+
+        .time-box .time {
+            font-weight: 700;
+            font-size: 0.95rem;
+        }
+
+        .time-box .period {
+            font-size: 0.75rem;
+            margin-top: 2px;
+        }
+
+        .program-info {
+            flex: 1;
+        }
+
+        .program-title {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .program-desc {
+            font-size: 0.82rem;
+            color: var(--text-muted);
+            line-height: 1.4;
+        }
+
+        .badge {
+            display: inline-block;
+            margin-top: 8px;
+            padding: 3px 8px;
+            background: #ecfdf5;
+            color: var(--accent);
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        /* انيميشن انتقال سلس */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- الهيدر التنقلي -->
+    <header>
+        <div class="header-title">جدول الفعاليات والبرامج</div>
+        <div class="days-nav" id="daysNav">
+            <!-- سيتم توليد الأيام تلقائياً عبر JavaScript -->
+        </div>
+    </header>
+
+    <!-- المحتوى الرئيسي -->
+    <main class="container">
+        <div class="section-title">
+            <span id="selectedDayText">برامج اليوم</span>
+            <span id="totalPrograms" style="font-size: 0.8rem; font-weight: normal;"></span>
+        </div>
+
+        <div class="program-list" id="programList">
+            <!-- سيتم تحميل البرامج هنا -->
+        </div>
+    </main>
+
+    <script>
+        // بيانات البرامج للأيام المختلفة
+        const scheduleData = {
+            "الأحد": [
+                { time: "09:00", period: "صباحاً", title: "افتتاح البرنامج والترحيب", desc: "جلسة التعارف والاستقبال وتوزيع المطبوعات.", badge: "عام" },
+                { time: "10:30", period: "صباحاً", title: "ورشة التفكير الإبداعي", desc: "استعراض أساسيات بناء الأفكار والحلول المبتكرة.", badge: "ورشة عمل" },
+                { time: "01:00", period: "مساءً", title: "استراحة صلاة وغداء", desc: "بوفيه مفتوح ووقل استراحة للجميع.", badge: "راحة" },
+                { time: "04:00", period: "مساءً", title: "جلسة حوارية: المستقبل الرقمي", desc: "مناقشة أحدث التوجهات التقنية مع خبراء المجال.", badge: "جلسة" }
+            ],
+            "الإثنين": [
+                { time: "09:30", period: "صباحاً", title: "مقدمة في إدارة المشاريع", desc: "كيف تخطط لمشروعك من الصفر وحتى التنفيذ.", badge: "تعليمي" },
+                { time: "11:30", period: "صباحاً", title: "جلسة عصف ذهني جماعية", desc: "تطبيق عملي على المشاريع المعتمدة.", badge: "تفاعلي" },
+                { time: "05:00", period: "مساءً", title: "لقاء شبكة العلاقات", desc: "فرصة للتواصل وبناء شراكات جديدة.", badge: "تواصل" }
+            ],
+            "الثلاثاء": [
+                { time: "10:00", period: "صباحاً", title: "تصميم تجربة المستخدم", desc: "أهم القواعد لتصميم تطبيقات ومواقع سهلة الاستخدام.", badge: "تصميم" },
+                { time: "02:00", period: "مساءً", title: "عرض التقييم النهائي", desc: "مراجعة النتائج واستعراض أهم المخرجات.", badge: "تقييم" }
+            ],
+            "الأربعاء": [
+                { time: "09:00", period: "صباحاً", title: "التسويق الرقمي وبناء الهوية", desc: "استراتيجيات استهداف الجمهور وإدارة الحملات.", badge: "تسويق" },
+                { time: "01:30", period: "مساءً", title: "حلقة نقاش مفتوحة", desc: "أسئلة وإجابات مع ضيوف الشرف.", badge: "حوار" }
+            ],
+            "الخميس": [
+                { time: "10:00", period: "صباحاً", title: "عرض المشاريع الختامية", desc: "استعراض المشاريع المشاركة أمام لجنة التحكيم.", badge: "ختام" },
+                { time: "06:00", period: "مساءً", title: "الحفل الختامي وتوزيع الجوائز", desc: "تكريم المشاركين الفائزين وتوزيع الشهادات.", badge: "احتفال" }
+            ]
+        };
+
+        const days = [
+            { name: "الأحد", date: "18" },
+            { name: "الإثنين", date: "19" },
+            { name: "الثلاثاء", date: "20" },
+            { name: "الأربعاء", date: "21" },
+            { name: "الخميس", date: "22" }
+        ];
+
+        let activeDayIndex = 0;
+
+        // بناء شريط الأيام
+        function renderDaysNav() {
+            const nav = document.getElementById('daysNav');
+            nav.innerHTML = '';
+
+            days.forEach((day, index) => {
+                const btn = document.createElement('div');
+                btn.className = `day-tab ${index === activeDayIndex ? 'active' : ''}`;
+                btn.onclick = () => selectDay(index);
+
+                btn.innerHTML = `
+                    <span class="day-name">${day.name}</span>
+                    <span class="day-date">${day.date}</span>
+                `;
+                nav.appendChild(btn);
+            });
+        }
+
+        // اختيار اليوم وتحديث البرامج
+        function selectDay(index) {
+            activeDayIndex = index;
+            renderDaysNav();
+            renderPrograms(days[index].name);
+
+            // تمرير الشريط ليكون اليوم المحدد مرئياً بالكامل
+            const activeTab = document.querySelectorAll('.day-tab')[index];
+            activeTab.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+        }
+
+        // عرض قائمة البرامج لليوم المحدد
+        function renderPrograms(dayName) {
+            const listContainer = document.getElementById('programList');
+            const dayText = document.getElementById('selectedDayText');
+            const totalText = document.getElementById('totalPrograms');
+
+            const programs = scheduleData[dayName] || [];
+
+            dayText.innerText = `برامج يوم ${dayName}`;
+            totalText.innerText = `${programs.length} فعاليات`;
+
+            if (programs.length === 0) {
+                listContainer.innerHTML = `<p style="text-align:center; color: var(--text-muted); padding: 40px 0;">لا توجد برامج مسجلة لهذا اليوم.</p>`;
+                return;
+            }
+
+            listContainer.innerHTML = programs.map(prog => `
+                <div class="program-card">
+                    <div class="time-box">
+                        <span class="time">${prog.time}</span>
+                        <span class="period">${prog.period}</span>
+                    </div>
+                    <div class="program-info">
+                        <div class="program-title">${prog.title}</div>
+                        <div class="program-desc">${prog.desc}</div>
+                        <span class="badge">${prog.badge}</span>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // التشغيل الابتدائي
+        renderDaysNav();
+        renderPrograms(days[0].name);
+    </script>
+</body>
+</html>
