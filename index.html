@@ -49,11 +49,12 @@
             margin-bottom: 12px;
         }
 
+        /* تعديل الحاويات لتقليل العرض المسحوب */
         .days-nav {
             display: flex;
-            gap: 8px;
+            gap: 6px; /* تقليل الفجوة بين الأزرار */
             overflow-x: auto;
-            padding: 0 12px 12px 12px;
+            padding: 0 10px 12px 10px;
             scrollbar-width: none;
         }
 
@@ -61,17 +62,20 @@
             display: none;
         }
 
+        /* تعديل حجم زر اليوم ليصبح ألمس وأنسب للشاشات الصغيرة */
         .day-tab {
-            flex: 0 0 auto;
-            padding: 10px 16px;
+            flex: 1 1 0px; /* التوزيع المتساوي على المساحة */
+            min-width: max-content;
+            padding: 8px 10px; /* تقليل الحشو الداخلي */
             background: #f1f5f9;
-            border-radius: 12px;
+            border-radius: 10px;
             font-weight: 700;
-            font-size: 0.9rem;
+            font-size: 0.82rem; /* تصغير الخط قليلاً */
             color: var(--text-muted);
             cursor: pointer;
             transition: all 0.2s ease;
             text-align: center;
+            white-space: nowrap;
         }
 
         .day-tab.active {
@@ -169,7 +173,7 @@
     <script>
         const scheduleData = [
             {
-                dayTitle: "يوم الاثنين",
+                dayTitle: "الاثنين",
                 subtitle: "اليوم الأول",
                 programs: [
                     { time: "04:15 - 04:35", actual: "", title: "التجمع", person: "علي الحتو", location: "آخر المسجد" },
@@ -187,7 +191,7 @@
                 ]
             },
             {
-                dayTitle: "يوم الثلاثاء",
+                dayTitle: "الثلاثاء",
                 subtitle: "اليوم الثاني",
                 programs: [
                     { time: "04:00 - 04:30", actual: "30 دقيقة", title: "الاستيقاظ وصلاة الوتر", person: "علي الحتو", location: "مقرات الاسر" },
@@ -206,7 +210,7 @@
                 ]
             },
             {
-                dayTitle: "يوم الأربعاء",
+                dayTitle: "الأربعاء",
                 subtitle: "اليوم الثالث",
                 programs: [
                     { time: "04:30 - 05:00", actual: "30 دقيقة", title: "الاستيقاظ", person: "علي الحتو", location: "-" },
@@ -231,7 +235,7 @@
                 ]
             },
             {
-                dayTitle: "يوم الخميس",
+                dayTitle: "الخميس",
                 subtitle: "اليوم الرابع والأخير",
                 programs: [
                     { time: "05:00 - 05:25", actual: "25 دقيقة", title: "الاذان وصلاة الفجر", person: "علي الحتو", location: "المشب" },
