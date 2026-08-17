@@ -3,19 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>جدول البرامج اليومية</title>
-    <!-- خط تجوال لشكل عصري وأنيق -->
+    <title>جدول البرنامج اليومي</title>
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
-    
     <style>
         :root {
-            --primary: #6366f1;
-            --primary-light: #e0e7ff;
+            --primary: #1e3a8a;
+            --primary-light: #eff6ff;
+            --accent: #2563eb;
             --bg: #f8fafc;
             --card-bg: #ffffff;
             --text-main: #0f172a;
             --text-muted: #64748b;
-            --accent: #10b981;
+            --border: #e2e8f0;
         }
 
         * {
@@ -29,297 +28,270 @@
         body {
             background-color: var(--bg);
             color: var(--text-main);
-            padding-bottom: 30px;
-            overflow-x: hidden;
+            padding-bottom: 40px;
         }
 
-        /* الهيدر العلوي */
         header {
             position: sticky;
             top: 0;
             background-color: var(--card-bg);
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.06);
             z-index: 100;
             padding-top: 15px;
+            border-bottom: 1px solid var(--border);
         }
 
         .header-title {
             text-align: center;
-            font-size: 1.2rem;
+            font-size: 1.25rem;
             font-weight: 700;
             color: var(--primary);
             margin-bottom: 12px;
         }
 
-        /* شريط التنقل بين الأيام (أفقي وسلس) */
         .days-nav {
             display: flex;
-            gap: 10px;
+            gap: 8px;
             overflow-x: auto;
-            padding: 0 15px 12px 15px;
-            scrollbar-width: none; /* إخفاء شريط التمرير لفيرفوكس */
+            padding: 0 12px 12px 12px;
+            scrollbar-width: none;
         }
 
         .days-nav::-webkit-scrollbar {
-            display: none; /* إخفاء شريط التمرير لكروم وسفاري */
+            display: none;
         }
 
         .day-tab {
             flex: 0 0 auto;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            width: 65px;
-            height: 70px;
+            padding: 10px 16px;
             background: #f1f5f9;
-            border-radius: 16px;
-            border: 2px solid transparent;
-            cursor: pointer;
-            transition: all 0.25s ease;
-        }
-
-        .day-tab .day-name {
-            font-size: 0.85rem;
-            font-weight: 500;
-            color: var(--text-muted);
-        }
-
-        .day-tab .day-date {
-            font-size: 1.1rem;
+            border-radius: 12px;
             font-weight: 700;
-            margin-top: 2px;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-align: center;
         }
 
-        /* اليوم النشط */
         .day-tab.active {
             background: var(--primary);
-            color: #fff;
-            box-shadow: 0 6px 12px rgba(99, 102, 241, 0.3);
-            transform: translateY(-2px);
+            color: #ffffff;
+            box-shadow: 0 4px 12px rgba(30, 58, 138, 0.3);
         }
 
-        .day-tab.active .day-name,
-        .day-tab.active .day-date {
-            color: #fff;
-        }
-
-        /* حاوية قائمة البرامج */
         .container {
-            padding: 20px 15px;
+            padding: 16px;
             max-width: 600px;
             margin: 0 auto;
         }
 
-        .section-title {
-            font-size: 0.95rem;
-            font-weight: 700;
-            color: var(--text-muted);
-            margin-bottom: 15px;
+        .program-card {
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 16px;
+            margin-bottom: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+            border: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .card-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
+            border-bottom: 1px dashed var(--border);
+            padding-bottom: 8px;
         }
 
-        .program-list {
-            display: flex;
-            flex-direction: column;
-            gap: 14px;
-        }
-
-        /* كارت البرنامج */
-        .program-card {
-            background: var(--card-bg);
-            border-radius: 18px;
-            padding: 16px;
-            display: flex;
-            gap: 15px;
-            align-items: center;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.03);
-            border: 1px solid #edf2f7;
-            animation: fadeIn 0.3s ease;
-        }
-
-        .time-box {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            background: var(--primary-light);
-            color: var(--primary);
-            padding: 10px;
-            border-radius: 14px;
-            min-width: 75px;
-            text-align: center;
-        }
-
-        .time-box .time {
+        .program-name {
+            font-size: 1.1rem;
             font-weight: 700;
-            font-size: 0.95rem;
-        }
-
-        .time-box .period {
-            font-size: 0.75rem;
-            margin-top: 2px;
-        }
-
-        .program-info {
+            color: var(--primary);
             flex: 1;
         }
 
-        .program-title {
-            font-size: 1rem;
+        .actual-time {
+            background: #fef3c7;
+            color: #92400e;
+            font-size: 0.8rem;
             font-weight: 700;
-            margin-bottom: 4px;
+            padding: 4px 8px;
+            border-radius: 8px;
+            white-space: nowrap;
         }
 
-        .program-desc {
-            font-size: 0.82rem;
-            color: var(--text-muted);
-            line-height: 1.4;
+        .card-details {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            font-size: 0.88rem;
         }
 
-        .badge {
-            display: inline-block;
-            margin-top: 8px;
-            padding: 3px 8px;
-            background: #ecfdf5;
-            color: var(--accent);
-            border-radius: 6px;
+        .detail-item {
+            display: flex;
+            flex-direction: column;
+            background: #f8fafc;
+            padding: 8px 10px;
+            border-radius: 8px;
+        }
+
+        .detail-label {
             font-size: 0.75rem;
-            font-weight: 600;
+            color: var(--text-muted);
+            margin-bottom: 2px;
         }
 
-        /* انيميشن انتقال سلس */
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
+        .detail-value {
+            font-weight: 600;
+            color: var(--text-main);
+            white-space: pre-line;
+        }
+
+        .full-width {
+            grid-column: span 2;
         }
     </style>
 </head>
 <body>
 
-    <!-- الهيدر التنقلي -->
     <header>
-        <div class="header-title">جدول الفعاليات والبرامج</div>
-        <div class="days-nav" id="daysNav">
-            <!-- سيتم توليد الأيام تلقائياً عبر JavaScript -->
-        </div>
+        <div class="header-title">جدول البرنامج اليومي</div>
+        <div class="days-nav" id="daysNav"></div>
     </header>
 
-    <!-- المحتوى الرئيسي -->
     <main class="container">
-        <div class="section-title">
-            <span id="selectedDayText">برامج اليوم</span>
-            <span id="totalPrograms" style="font-size: 0.8rem; font-weight: normal;"></span>
-        </div>
-
-        <div class="program-list" id="programList">
-            <!-- سيتم تحميل البرامج هنا -->
-        </div>
+        <div id="programList"></div>
     </main>
 
     <script>
-        // بيانات البرامج للأيام المختلفة
-        const scheduleData = {
-            "الأحد": [
-                { time: "09:00", period: "صباحاً", title: "افتتاح البرنامج والترحيب", desc: "جلسة التعارف والاستقبال وتوزيع المطبوعات.", badge: "عام" },
-                { time: "10:30", period: "صباحاً", title: "ورشة التفكير الإبداعي", desc: "استعراض أساسيات بناء الأفكار والحلول المبتكرة.", badge: "ورشة عمل" },
-                { time: "01:00", period: "مساءً", title: "استراحة صلاة وغداء", desc: "بوفيه مفتوح ووقل استراحة للجميع.", badge: "راحة" },
-                { time: "04:00", period: "مساءً", title: "جلسة حوارية: المستقبل الرقمي", desc: "مناقشة أحدث التوجهات التقنية مع خبراء المجال.", badge: "جلسة" }
-            ],
-            "الإثنين": [
-                { time: "09:30", period: "صباحاً", title: "مقدمة في إدارة المشاريع", desc: "كيف تخطط لمشروعك من الصفر وحتى التنفيذ.", badge: "تعليمي" },
-                { time: "11:30", period: "صباحاً", title: "جلسة عصف ذهني جماعية", desc: "تطبيق عملي على المشاريع المعتمدة.", badge: "تفاعلي" },
-                { time: "05:00", period: "مساءً", title: "لقاء شبكة العلاقات", desc: "فرصة للتواصل وبناء شراكات جديدة.", badge: "تواصل" }
-            ],
-            "الثلاثاء": [
-                { time: "10:00", period: "صباحاً", title: "تصميم تجربة المستخدم", desc: "أهم القواعد لتصميم تطبيقات ومواقع سهلة الاستخدام.", badge: "تصميم" },
-                { time: "02:00", period: "مساءً", title: "عرض التقييم النهائي", desc: "مراجعة النتائج واستعراض أهم المخرجات.", badge: "تقييم" }
-            ],
-            "الأربعاء": [
-                { time: "09:00", period: "صباحاً", title: "التسويق الرقمي وبناء الهوية", desc: "استراتيجيات استهداف الجمهور وإدارة الحملات.", badge: "تسويق" },
-                { time: "01:30", period: "مساءً", title: "حلقة نقاش مفتوحة", desc: "أسئلة وإجابات مع ضيوف الشرف.", badge: "حوار" }
-            ],
-            "الخميس": [
-                { time: "10:00", period: "صباحاً", title: "عرض المشاريع الختامية", desc: "استعراض المشاريع المشاركة أمام لجنة التحكيم.", badge: "ختام" },
-                { time: "06:00", period: "مساءً", title: "الحفل الختامي وتوزيع الجوائز", desc: "تكريم المشاركين الفائزين وتوزيع الشهادات.", badge: "احتفال" }
-            ]
-        };
-
-        const days = [
-            { name: "الأحد", date: "18" },
-            { name: "الإثنين", date: "19" },
-            { name: "الثلاثاء", date: "20" },
-            { name: "الأربعاء", date: "21" },
-            { name: "الخميس", date: "22" }
+        const scheduleData = [
+            {
+                dayTitle: "يوم الاثنين",
+                subtitle: "اليوم الأول",
+                programs: [
+                    { time: "04:15 - 04:35", actual: "", title: "التجمع", person: "علي الحتو", location: "آخر المسجد" },
+                    { time: "04:45 - 05:15", actual: "", title: "صلاة الفجر", person: "الجميع", location: "المسجد" },
+                    { time: "05:30", actual: "09:30", title: "الانطلاق", person: "علي الحتو", location: "" },
+                    { time: "04:00", actual: "", title: "الوصول", person: "", location: "" },
+                    { time: "04:00 - 04:45", actual: "35", title: "تنزيل العفش + وقت مفتوح", person: "اللجنة الاجتماعية", location: "الاستراحة مقابل باب الدخول" },
+                    { time: "04:45 - 05:45", actual: "45", title: "الجلسة الافتتاحية مع الشرح", person: "علي الحتو", location: "المشب" },
+                    { time: "05:45 - 06:45", actual: "45", title: "ادخال العفش للغرف + لقاء أسري", person: "قادة ومعلمي الاسر", location: "مقرات الاسر" },
+                    { time: "07:00 - 07:30", actual: "30", title: "صلاة المغرب والعشاء\nكلمة طالب 1", person: "أسرة التعاون", location: "المشب" },
+                    { time: "07:30 - 08:45", actual: "ساعة وربع", title: "درس المسئولية\nموانع / مسئوليات في حياتنا", person: "أبو عبدالله\nعلي الحتو", location: "المشب" },
+                    { time: "09:00 - 10:00", actual: "60", title: "كرة طائرة", person: "أبو فيصل", location: "ملعب الطائرة" },
+                    { time: "10:15 - 10:45", actual: "30", title: "عشاء", person: "اللجنة الاجتماعية", location: "مقرات الاسر" },
+                    { time: "11:00 - 04:00", actual: "5 ساعات", title: "نووووووووم", person: "علي الحتو", location: "مقرات الاسر" }
+                ]
+            },
+            {
+                dayTitle: "يوم الثلاثاء",
+                subtitle: "اليوم الثاني",
+                programs: [
+                    { time: "04:00 - 04:30", actual: "30", title: "الاستيقاظ وصلاة الوتر", person: "علي الحتو", location: "مقرات الاسر" },
+                    { time: "04:30 - 05:00", actual: "30", title: "صلاة الفجر\nكلمة معلم 1", person: "أسرة الشموخ", location: "المشب" },
+                    { time: "05:00 - 05:45", actual: "45", title: "جلسة إشراق + أذكار", person: "معلمي الاسر\nمتابعة علي الحتو", location: "المشب" },
+                    { time: "06:00 - 07:45", actual: "ساعة 45", title: "مهرجان حركي", person: "أ. أسامة إسحاق\nأ/ حسين", location: "الساحة الخارجية" },
+                    { time: "08:00 - 08:45", actual: "45", title: "لقاء أسري", person: "قادة ومعلمي الاسر", location: "مقرات الاسر" },
+                    { time: "09:00 - 09:30", actual: "30", title: "فطور", person: "اللجنة الاجتماعية", location: "مقرات الاسر" },
+                    { time: "09:30 - 10:30", actual: "60", title: "نووووووووم", person: "علي الحتو", location: "مقرات الاسر" },
+                    { time: "10:30 - 11:00", actual: "30", title: "الاستيقاظ والتجهيز للانطلاق", person: "علي الحتو", location: "-" },
+                    { time: "11:00 - 7", actual: "8 ساعات", title: "طلعة تنومة\nدرس العفة ساعة و 30 دقيقة\nثقافي ثماني ساعة\nوقت مفتوح ساعة\nغداء\nصلاة ظهر وعصر وكلمة طالب 2", person: "أبو فيصل\nأ. أسامة إسحاق\nأ. حسين\nعبدالجبار\nأبو فيصل\nاللجنة الاجتماعية", location: "تنومة" },
+                    { time: "08:30 - 09:15", actual: "45", title: "صلاة المغرب والعشاء\nكلمة طالب 3 + الوتر", person: "أسرة الشموخ", location: "الساحة الخارجية" },
+                    { time: "09:15 - 10:30", actual: "ساعة وربع", title: "جلسة أخوية وقفص الاتهام", person: "أبو فيصل", location: "الساحة الخارجية" },
+                    { time: "10:30 - 11:15", actual: "45", title: "عشاء", person: "اللجنة الاجتماعية", location: "الساحة الخارجية" },
+                    { time: "11:30 - 04:30", actual: "5 ساعات", title: "نووووووووم", person: "علي الحتو", location: "مقرات الاسر" }
+                ]
+            },
+            {
+                dayTitle: "يوم الأربعاء",
+                subtitle: "اليوم الثالث",
+                programs: [
+                    { time: "04:30 - 05:00", actual: "30", title: "الاستيقاظ", person: "علي الحتو", location: "-" },
+                    { time: "05:00 - 05:30", actual: "30", title: "صلاة الفجر\nكلمة معلم 2", person: "أسرة الطموح", location: "الساحة الخارجية" },
+                    { time: "05:30 - 06:15", actual: "45", title: "جلسة إشراق + أذكار", person: "معلمي الاسر\nمتابعة علي الحتو", location: "الساحة الخارجية" },
+                    { time: "06:30 - 07:30", actual: "60", title: "طائرة", person: "أبو فيصل", location: "ملعب الطائرة" },
+                    { time: "07:30 - 08:00", actual: "30", title: "وقت مفتوح وحبشتكان", person: "قادة ومعلمي الاسر\nاللجنة الاجتماعية", location: "-" },
+                    { time: "08:00 - 08:45", actual: "45", title: "لقاء أسري", person: "قادة ومعلمي الاسر", location: "مقرات الاسر" },
+                    { time: "09:00 - 10:30", actual: "ساعة وربع", title: "ثقافي حركي", person: "علي الحتو\nمساعدة أ. حسين", location: "مجلس السراميك" },
+                    { time: "10:30 - 12:30", actual: "ساعتين", title: "نووووووووم", person: "علي الحتو", location: "مقرات الاسر" },
+                    { time: "12:30 - 12:45", actual: "15", title: "استيقاظ وركوب الباص", person: "علي الحتو", location: "-" },
+                    { time: "01:00 - 04:00", actual: "4 ساعات", title: "طلعة المطل والفطور", person: "أبو فيصل", location: "-" },
+                    { time: "05:00 - 05:45", actual: "45", title: "العودة صلاة الظهر والعصر تأخير\nكلمة طالب 4", person: "أسرة الطموح", location: "المشب" },
+                    { time: "05:45 - 07:00", actual: "ساعة وربع", title: "درس حسن الخلق المعنى والاهتمية\nوارتباطه بالمروة", person: "أبو فيصل", location: "المشب" },
+                    { time: "07:15 - 07:45", actual: "30", title: "صلاة المغرب والعشاء\nكلمة طالب 5", person: "أسرة الطموح", location: "المشب" },
+                    { time: "08:00 - 09:30", actual: "ساعة ونصف", title: "لقاء أسري أخير", person: "قادة ومعلمي الاسر", location: "مقرات الاسر" },
+                    { time: "10:00 - 12:00", actual: "ساعتين", title: "حفل السمر", person: "أبو فيصل\nجميع المعلمين المتواجدين\nعلي الحتو", location: "؟؟" },
+                    { time: "12:00 - 01:00", actual: "60", title: "عشاء", person: "اللجنة الاجتماعية", location: "المشب" },
+                    { time: "01:00 - 01:30", actual: "30", title: "وقت مفتوح وشاهي", person: "اللجنة الاجتماعية", location: "الساحة الخارجية" },
+                    { time: "01:30 - 03:00", actual: "ساعة ونصف", title: "التكريم", person: "أ. حسين عبدالجبار", location: "المجلس الداخلي" },
+                    { time: "03:30 - 05:00", actual: "ساعة ونصف", title: "جلسة المصارحة والمطارحه", person: "أبو فيصل / أ. حسين", location: "المجلس الداخلي" }
+                ]
+            },
+            {
+                dayTitle: "يوم الخميس",
+                subtitle: "اليوم الرابع والأخير",
+                programs: [
+                    { time: "05:00 - 05:25", actual: "25", title: "الاذان وصلاة الفجر", person: "علي الحتو", location: "المشب" },
+                    { time: "05:30 - 12:00", actual: "5 ساعات ونصف", title: "نووووووووم", person: "أبو فيصل", location: "مقرات الاسر" },
+                    { time: "12:00 - 12:30", actual: "30", title: "الاستيقاظ", person: "أبو فيصل", location: "-" },
+                    { time: "12:30 - 01:30", actual: "60", title: "تجهيز العفش", person: "اللجنة الاجتماعية", location: "الاستراحة مقابل باب الخروج" },
+                    { time: "01:30 - 01:50", actual: "20", title: "الاذان وصلاة الظهر والعصر", person: "علي الحتو", location: "المشب" },
+                    { time: "02:00 - 02:30", actual: "30", title: "كلمة ختامية", person: "علي الحتو\nأبو فيصل", location: "المشب" },
+                    { time: "02:30 - 12:00", actual: "9 ساعات ونصف", title: "الانطلاق والوصول", person: "أبو فيصل", location: "-" }
+                ]
+            }
         ];
 
-        let activeDayIndex = 0;
+        let activeIndex = 0;
 
-        // بناء شريط الأيام
         function renderDaysNav() {
             const nav = document.getElementById('daysNav');
-            nav.innerHTML = '';
-
-            days.forEach((day, index) => {
-                const btn = document.createElement('div');
-                btn.className = `day-tab ${index === activeDayIndex ? 'active' : ''}`;
-                btn.onclick = () => selectDay(index);
-
-                btn.innerHTML = `
-                    <span class="day-name">${day.name}</span>
-                    <span class="day-date">${day.date}</span>
-                `;
-                nav.appendChild(btn);
-            });
+            nav.innerHTML = scheduleData.map((day, idx) => `
+                <div class="day-tab ${idx === activeIndex ? 'active' : ''}" onclick="selectDay(${idx})">
+                    <div>${day.dayTitle}</div>
+                </div>
+            `).join('');
         }
 
-        // اختيار اليوم وتحديث البرامج
-        function selectDay(index) {
-            activeDayIndex = index;
+        function selectDay(idx) {
+            activeIndex = idx;
             renderDaysNav();
-            renderPrograms(days[index].name);
-
-            // تمرير الشريط ليكون اليوم المحدد مرئياً بالكامل
-            const activeTab = document.querySelectorAll('.day-tab')[index];
-            activeTab.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+            renderPrograms();
         }
 
-        // عرض قائمة البرامج لليوم المحدد
-        function renderPrograms(dayName) {
-            const listContainer = document.getElementById('programList');
-            const dayText = document.getElementById('selectedDayText');
-            const totalText = document.getElementById('totalPrograms');
+        function renderPrograms() {
+            const list = document.getElementById('programList');
+            const dayData = scheduleData[activeIndex];
 
-            const programs = scheduleData[dayName] || [];
-
-            dayText.innerText = `برامج يوم ${dayName}`;
-            totalText.innerText = `${programs.length} فعاليات`;
-
-            if (programs.length === 0) {
-                listContainer.innerHTML = `<p style="text-align:center; color: var(--text-muted); padding: 40px 0;">لا توجد برامج مسجلة لهذا اليوم.</p>`;
-                return;
-            }
-
-            listContainer.innerHTML = programs.map(prog => `
+            list.innerHTML = dayData.programs.map(item => `
                 <div class="program-card">
-                    <div class="time-box">
-                        <span class="time">${prog.time}</span>
-                        <span class="period">${prog.period}</span>
+                    <div class="card-header">
+                        <div class="program-name">${item.title.replace(/\n/g, '<br>')}</div>
+                        ${item.actual ? `<div class="actual-time">الوقت الفعلي: ${item.actual}</div>` : ''}
                     </div>
-                    <div class="program-info">
-                        <div class="program-title">${prog.title}</div>
-                        <div class="program-desc">${prog.desc}</div>
-                        <span class="badge">${prog.badge}</span>
+                    <div class="card-details">
+                        <div class="detail-item">
+                            <span class="detail-label">الوقت (من - إلى)</span>
+                            <span class="detail-value">${item.time}</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">المقر</span>
+                            <span class="detail-value">${item.location || '-'}</span>
+                        </div>
+                        <div class="detail-item full-width">
+                            <span class="detail-label">المكلف</span>
+                            <span class="detail-value">${item.person ? item.person.replace(/\n/g, ' / ') : '-'}</span>
+                        </div>
                     </div>
                 </div>
             `).join('');
         }
 
-        // التشغيل الابتدائي
         renderDaysNav();
-        renderPrograms(days[0].name);
+        renderPrograms();
     </script>
 </body>
 </html>
