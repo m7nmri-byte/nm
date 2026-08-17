@@ -15,8 +15,6 @@
             --text-main: #0f172a;
             --text-muted: #64748b;
             --border: #e2e8f0;
-            --active-border: #2563eb;
-            --now-badge-bg: #dc2626;
         }
 
         * {
@@ -98,14 +96,6 @@
             display: flex;
             flex-direction: column;
             gap: 10px;
-            transition: all 0.3s ease;
-        }
-
-        /* تنسيق الكرت في الوقت الحالي */
-        .program-card.is-now {
-            border: 2px solid var(--active-border);
-            background-color: #f0f7ff;
-            box-shadow: 0 4px 18px rgba(37, 99, 235, 0.2);
         }
 
         .card-header {
@@ -121,25 +111,6 @@
             font-weight: 700;
             color: var(--primary);
             flex: 1;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .now-badge {
-            background-color: var(--now-badge-bg);
-            color: #ffffff;
-            font-size: 0.75rem;
-            font-weight: 700;
-            padding: 2px 8px;
-            border-radius: 6px;
-            animation: pulse 1.5s infinite;
-        }
-
-        @keyframes pulse {
-            0% { opacity: 1; }
-            50% { opacity: 0.5; }
-            100% { opacity: 1; }
         }
 
         .actual-time {
@@ -199,7 +170,6 @@
         const scheduleData = [
             {
                 dayTitle: "يوم الاثنين",
-                dayIndex: 1, // الاثنين
                 subtitle: "اليوم الأول",
                 programs: [
                     { time: "04:15 - 04:35", actual: "", title: "التجمع", person: "علي الحتو", location: "آخر المسجد" },
@@ -218,7 +188,6 @@
             },
             {
                 dayTitle: "يوم الثلاثاء",
-                dayIndex: 2, // الثلاثاء
                 subtitle: "اليوم الثاني",
                 programs: [
                     { time: "04:00 - 04:30", actual: "30 دقيقة", title: "الاستيقاظ وصلاة الوتر", person: "علي الحتو", location: "مقرات الاسر" },
@@ -229,7 +198,7 @@
                     { time: "09:00 - 09:30", actual: "30 دقيقة", title: "فطور", person: "اللجنة الاجتماعية", location: "مقرات الاسر" },
                     { time: "09:30 - 10:30", actual: "60 دقيقة", title: "نووووووووم", person: "علي الحتو", location: "مقرات الاسر" },
                     { time: "10:30 - 11:00", actual: "30 دقيقة", title: "الاستيقاظ والتجهيز للانطلاق", person: "علي الحتو", location: "-" },
-                    { time: "11:00 - 07:00", actual: "8 ساعات", title: "طلعة تنومة\nدرس العفة ساعة و 30 دقيقة\nثقافي ثماني ساعة\nوقت مفتوح ساعة\nغداء\nصلاة ظهر وعصر وكلمة طالب 2", person: "أبو فيصل\nأ. أسامة إسحاق\nأ. حسين\nعبدالجبار\nأبو فيصل\nاللجنة الاجتماعية", location: "تنومة" },
+                    { time: "11:00 - 7", actual: "8 ساعات", title: "طلعة تنومة\nدرس العفة ساعة و 30 دقيقة\nثقافي ثماني ساعة\nوقت مفتوح ساعة\nغداء\nصلاة ظهر وعصر وكلمة طالب 2", person: "أبو فيصل\nأ. أسامة إسحاق\nأ. حسين\nعبدالجبار\nأبو فيصل\nاللجنة الاجتماعية", location: "تنومة" },
                     { time: "08:30 - 09:15", actual: "45 دقيقة", title: "صلاة المغرب والعشاء\nكلمة طالب 3 + الوتر", person: "أسرة الشموخ", location: "الساحة الخارجية" },
                     { time: "09:15 - 10:30", actual: "ساعة وربع", title: "جلسة أخوية وقفص الاتهام", person: "أبو فيصل", location: "الساحة الخارجية" },
                     { time: "10:30 - 11:15", actual: "45 دقيقة", title: "عشاء", person: "اللجنة الاجتماعية", location: "الساحة الخارجية" },
@@ -238,7 +207,6 @@
             },
             {
                 dayTitle: "يوم الأربعاء",
-                dayIndex: 3, // الأربعاء
                 subtitle: "اليوم الثالث",
                 programs: [
                     { time: "04:30 - 05:00", actual: "30 دقيقة", title: "الاستيقاظ", person: "علي الحتو", location: "-" },
@@ -264,7 +232,6 @@
             },
             {
                 dayTitle: "يوم الخميس",
-                dayIndex: 4, // الخميس
                 subtitle: "اليوم الرابع والأخير",
                 programs: [
                     { time: "05:00 - 05:25", actual: "25 دقيقة", title: "الاذان وصلاة الفجر", person: "علي الحتو", location: "المشب" },
@@ -279,16 +246,6 @@
         ];
 
         let activeIndex = 0;
-        let lastAutoScrolledProgram = null;
-
-        // تحديد اليوم الحالي تلقائياً بناءً على وقت النظام
-        function detectCurrentDay() {
-            const currentDayOfWeek = new Date().getDay(); // 1 = الاثنين, 2 = الثلاثاء ...
-            const foundIndex = scheduleData.findIndex(d => d.dayIndex === currentDayOfWeek);
-            if (foundIndex !== -1) {
-                activeIndex = foundIndex;
-            }
-        }
 
         function renderDaysNav() {
             const nav = document.getElementById('daysNav');
@@ -303,28 +260,16 @@
             activeIndex = idx;
             renderDaysNav();
             renderPrograms();
-            checkAndHighlightCurrentProgram(true);
-        }
-
-        // تحويل النص الزمني مثل "04:15" إلى دقائق من بداية اليوم
-        function parseTimeToMinutes(timeStr) {
-            if (!timeStr) return null;
-            const parts = timeStr.trim().split(':');
-            if (parts.length < 2) return null;
-            return parseInt(parts[0], 10) * 60 + parseInt(parts[1], 10);
         }
 
         function renderPrograms() {
             const list = document.getElementById('programList');
             const dayData = scheduleData[activeIndex];
 
-            list.innerHTML = dayData.programs.map((item, pIdx) => `
-                <div class="program-card" id="program-card-${pIdx}">
+            list.innerHTML = dayData.programs.map(item => `
+                <div class="program-card">
                     <div class="card-header">
-                        <div class="program-name">
-                            <span>${item.title.replace(/\n/g, '<br>')}</span>
-                            <span class="now-badge" id="badge-${pIdx}" style="display: none;">الآن</span>
-                        </div>
+                        <div class="program-name">${item.title.replace(/\n/g, '<br>')}</div>
                         ${item.actual ? `<div class="actual-time">المدة: ${item.actual}</div>` : ''}
                     </div>
                     <div class="card-details">
@@ -345,76 +290,8 @@
             `).join('');
         }
 
-        // إيجاد الفعالية الحالية وتظليلها والتنقل إليها
-        function checkAndHighlightCurrentProgram(forceScroll = false) {
-            const now = new Date();
-            const currentDayOfWeek = now.getDay();
-            const currentMinutes = now.getHours() * 60 + now.getMinutes();
-
-            const dayData = scheduleData[activeIndex];
-            const isToday = (dayData.dayIndex === currentDayOfWeek);
-
-            let activeCardFound = false;
-
-            dayData.programs.forEach((item, pIdx) => {
-                const card = document.getElementById(`program-card-${pIdx}`);
-                const badge = document.getElementById(`badge-${pIdx}`);
-                if (!card) return;
-
-                let isCurrent = false;
-
-                if (isToday && item.time) {
-                    const times = item.time.split('-').map(t => t.trim());
-                    if (times.length === 2) {
-                        let startMin = parseTimeToMinutes(times[0]);
-                        let endMin = parseTimeToMinutes(times[1]);
-
-                        if (startMin !== null && endMin !== null) {
-                            // التعامل مع الأوقات التي تتجاوز منتصف الليل (مثل 11:00 - 04:00)
-                            if (endMin < startMin) {
-                                if (currentMinutes >= startMin || currentMinutes < endMin) {
-                                    isCurrent = true;
-                                }
-                            } else {
-                                if (currentMinutes >= startMin && currentMinutes < endMin) {
-                                    isCurrent = true;
-                                }
-                            }
-                        }
-                    }
-                }
-
-                if (isCurrent) {
-                    activeCardFound = true;
-                    card.classList.add('is-now');
-                    if (badge) badge.style.display = 'inline-block';
-
-                    // التمرير التلقائي مرة واحدة عند التغيير للبرنامج الحالي
-                    if (forceScroll || lastAutoScrolledProgram !== pIdx) {
-                        card.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                        lastAutoScrolledProgram = pIdx;
-                    }
-                } else {
-                    card.classList.remove('is-now');
-                    if (badge) badge.style.display = 'none';
-                }
-            });
-
-            if (!activeCardFound) {
-                lastAutoScrolledProgram = null;
-            }
-        }
-
-        // البدء والتهيئة
-        detectCurrentDay();
         renderDaysNav();
         renderPrograms();
-        checkAndHighlightCurrentProgram(true);
-
-        // التحديث التلقائي المستمر كل 10 ثوانٍ
-        setInterval(() => {
-            checkAndHighlightCurrentProgram();
-        }, 10000);
     </script>
 </body>
 </html>
